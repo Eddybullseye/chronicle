@@ -5,7 +5,7 @@ import { RichTextEditor } from './RichTextEditor';
 import { 
   LayoutDashboard, BookOpen, Layers, Bookmark, Users, HardDrive, BarChart3, Settings, 
   Plus, Edit, Eye, Trash, RefreshCw, CheckCircle, Search, MessageSquare, AlertCircle, FileText, Ban, Trash2, ArrowUpRight, Copy, Download,
-  Sliders, Database, Shield
+  Sliders, Database, Shield, LogOut
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CopyPromptDepot } from './CopyPromptDepot';
@@ -22,6 +22,7 @@ interface AdminDashboardProps {
   onUpdateProfiles: (updatedProfiles: Profile[]) => void;
   onUpdateSettings: (updatedSettings: SiteSettings) => void;
   onAddReviewComment: (newReview: PostReview) => void;
+  onLogout: () => void;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
@@ -36,6 +37,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onUpdateProfiles,
   onUpdateSettings,
   onAddReviewComment,
+  onLogout,
 }) => {
   const { hue, speed, setSpeed, isPaused, setIsPaused, particleCount, setParticleCount, auroraOpacity, setAuroraOpacity, activeAccentColor } = useHue();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'posts' | 'review' | 'categories' | 'tags' | 'users' | 'media' | 'analytics' | 'settings' | 'atmosphere' | 'blueprints'>('dashboard');
@@ -361,17 +363,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         {/* User Card inside Sidebar */}
         <div className="pt-4 mt-6 border-t border-slate-850 space-y-2">
-          <div className="flex items-center gap-2">
-            <img src={currentProfile.avatarUrl} alt="" className="w-8 h-8 rounded-full border border-slate-800" />
-            <div className="flex-1 min-w-0">
-              <h5 className="text-xs font-bold text-white truncate">{currentProfile.fullName}</h5>
-              <span 
-                className="text-[9px] font-bold px-1 py-0.2 rounded uppercase"
-                style={{ backgroundColor: `hsla(${hue}, 85%, 15%, 0.4)`, color: `hsl(${hue}, 85%, 65%)` }}
-              >
-                {currentProfile.role.replace(/_/g, ' ')}
-              </span>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <img src={currentProfile.avatarUrl} alt="" className="w-8 h-8 rounded-full border border-slate-800" />
+              <div className="flex-1 min-w-0">
+                <h5 className="text-xs font-bold text-white truncate">{currentProfile.fullName}</h5>
+                <span 
+                  className="text-[9px] font-bold px-1 py-0.2 rounded uppercase"
+                  style={{ backgroundColor: `hsla(${hue}, 85%, 15%, 0.4)`, color: `hsl(${hue}, 85%, 65%)` }}
+                >
+                  {currentProfile.role.replace(/_/g, ' ')}
+                </span>
+              </div>
             </div>
+            <button
+              onClick={onLogout}
+              className="text-slate-500 hover:text-rose-400 p-1.5 transition-colors"
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </aside>

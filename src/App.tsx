@@ -5,6 +5,7 @@ import { ParticleCanvas } from './components/ParticleCanvas';
 import { MorphingBlob } from './components/MorphingBlob';
 import { BlogFrontend } from './components/BlogFrontend';
 import { AdminDashboard } from './components/AdminDashboard';
+import { AdminSignIn } from './components/AdminSignIn';
 import { CopyPromptDepot } from './components/CopyPromptDepot';
 import { 
   initialPosts, 
@@ -265,6 +266,7 @@ function DesignWorkshopOrchestrator() {
 
   // Specific selected article id for public view jumps
   const [activePostId, setActivePostId] = useState<string | undefined>(undefined);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
   // Synchronise state arrays to localStorage for persistent play
   useEffect(() => {
@@ -1062,7 +1064,6 @@ function DesignWorkshopOrchestrator() {
             </motion.div>
           )}
 
-          {/* TAB 4: PUBLISHER CONSOLE CMS */}
           {activeTab === 'console' && (
             <motion.div
               key="console-area"
@@ -1071,19 +1072,24 @@ function DesignWorkshopOrchestrator() {
               exit={{ opacity: 0 }}
               className="space-y-6"
             >
-              <AdminDashboard
-                posts={posts}
-                categories={categories}
-                tags={tags}
-                profiles={profiles}
-                reviews={reviews}
-                settings={settings}
-                currentProfile={currentProfile}
-                onUpdatePosts={handleUpdatePosts}
-                onUpdateProfiles={handleUpdateProfiles}
-                onUpdateSettings={handleUpdateSettings}
-                onAddReviewComment={handleAddReviewComment}
-              />
+              {isAdminLoggedIn ? (
+                <AdminDashboard
+                  posts={posts}
+                  categories={categories}
+                  tags={tags}
+                  profiles={profiles}
+                  reviews={reviews}
+                  settings={settings}
+                  currentProfile={currentProfile}
+                  onUpdatePosts={handleUpdatePosts}
+                  onUpdateProfiles={handleUpdateProfiles}
+                  onUpdateSettings={handleUpdateSettings}
+                  onAddReviewComment={handleAddReviewComment}
+                  onLogout={() => setIsAdminLoggedIn(false)}
+                />
+              ) : (
+                <AdminSignIn onSignIn={() => setIsAdminLoggedIn(true)} />
+              )}
             </motion.div>
           )}
 
