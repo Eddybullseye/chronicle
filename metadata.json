@@ -1,0 +1,6 @@
+{
+  "name": "Blog Publishing Platform & Interactive Reference",
+  "description": "A full-stack style multi-role blog publishing platform with role-based workflows, detailed editorial dashboards, and an interactive Aurora Hue engine.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
