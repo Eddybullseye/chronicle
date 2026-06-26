@@ -210,21 +210,12 @@ function DesignWorkshopOrchestrator() {
 
   // Shared application states with localStorage synchronization with hot database upgrade for lifestyle focus
   const [posts, setPosts] = useState<Post[]>(() => {
-    const localSettings = localStorage.getItem('blog_db_settings');
-    if (localSettings && JSON.parse(localSettings).blogName === 'AuraPress') {
-      // Force return of new default lifestyle posts
-      return initialPosts;
-    }
-    const local = localStorage.getItem('blog_db_posts');
+    const local = localStorage.getItem('aura_clean_db_posts');
     return local ? JSON.parse(local) : initialPosts;
   });
 
   const [profiles, setProfiles] = useState<Profile[]>(() => {
-    const localSettings = localStorage.getItem('blog_db_settings');
-    if (localSettings && JSON.parse(localSettings).blogName === 'AuraPress') {
-      return initialProfiles;
-    }
-    const local = localStorage.getItem('blog_db_profiles');
+    const local = localStorage.getItem('aura_clean_db_profiles');
     return local ? JSON.parse(local) : initialProfiles;
   });
 
@@ -235,29 +226,13 @@ function DesignWorkshopOrchestrator() {
   const [tags] = useState<Tag[]>(initialTags);
 
   const [reviews, setReviews] = useState<PostReview[]>(() => {
-    const localSettings = localStorage.getItem('blog_db_settings');
-    if (localSettings && JSON.parse(localSettings).blogName === 'AuraPress') {
-      return initialReviews;
-    }
-    const local = localStorage.getItem('blog_db_reviews');
+    const local = localStorage.getItem('aura_clean_db_reviews');
     return local ? JSON.parse(local) : initialReviews;
   });
 
   const [settings, setSettings] = useState<SiteSettings>(() => {
-    const local = localStorage.getItem('blog_db_settings');
-    if (local) {
-      const parsed = JSON.parse(local);
-      if (parsed.blogName === 'AuraPress') {
-        // Enforce the new high-quality lifestyle defaults in storage
-        localStorage.removeItem('blog_db_posts');
-        localStorage.removeItem('blog_db_profiles');
-        localStorage.removeItem('blog_db_reviews');
-        localStorage.removeItem('blog_db_settings');
-        return initialSiteSettings;
-      }
-      return parsed;
-    }
-    return initialSiteSettings;
+    const local = localStorage.getItem('aura_clean_db_settings');
+    return local ? JSON.parse(local) : initialSiteSettings;
   });
 
   // Current active logged profile
@@ -270,19 +245,19 @@ function DesignWorkshopOrchestrator() {
 
   // Synchronise state arrays to localStorage for persistent play
   useEffect(() => {
-    localStorage.setItem('blog_db_posts', JSON.stringify(posts));
+    localStorage.setItem('aura_clean_db_posts', JSON.stringify(posts));
   }, [posts]);
 
   useEffect(() => {
-    localStorage.setItem('blog_db_profiles', JSON.stringify(profiles));
+    localStorage.setItem('aura_clean_db_profiles', JSON.stringify(profiles));
   }, [profiles]);
 
   useEffect(() => {
-    localStorage.setItem('blog_db_reviews', JSON.stringify(reviews));
+    localStorage.setItem('aura_clean_db_reviews', JSON.stringify(reviews));
   }, [reviews]);
 
   useEffect(() => {
-    localStorage.setItem('blog_db_settings', JSON.stringify(settings));
+    localStorage.setItem('aura_clean_db_settings', JSON.stringify(settings));
   }, [settings]);
 
   // Reset local development database

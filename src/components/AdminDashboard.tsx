@@ -322,6 +322,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
           </div>
 
+          <div className="pt-1">
+            <button
+              onClick={() => setEditingPost(null)}
+              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs py-2.5 px-3 rounded-lg cursor-pointer flex items-center justify-center gap-2 transition-all shadow-[0_4px_15px_rgba(16,185,129,0.2)] border border-emerald-500/40 font-sans"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Write New Article</span>
+            </button>
+          </div>
+
           <nav className="space-y-1.5 flex flex-col">
             {sidebarMenuItems.map((item) => {
               const isAllowed = hasAccess(item.roles);

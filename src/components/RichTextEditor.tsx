@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Post, Category, Tag, Profile, UserRole } from '../types';
 import { useHue } from './HueEngine';
-import { Eye, Code, Save, Send, Check, AlertCircle, Sparkles, Image, Settings, Globe } from 'lucide-react';
+import { Eye, Code, Save, Send, Check, AlertCircle, Sparkles, Image, Settings, Globe, Columns } from 'lucide-react';
 
 interface RichTextEditorProps {
   post?: Post | null;
@@ -39,7 +39,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const [metaDescription, setMetaDescription] = useState<string>('');
 
   // Editor states
-  const [isPreview, setIsPreview] = useState<boolean>(false);
+  const [editorMode, setEditorMode] = useState<'write' | 'split' | 'preview'>('write');
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saved' | 'saving'>('idle');
   const [wordCount, setWordCount] = useState<number>(0);
   const [readingTime, setReadingTime] = useState<number>(1);
@@ -244,13 +244,30 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setIsPreview(!isPreview)}
-            className="px-3 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium flex items-center gap-1.5 transition-colors"
-          >
-            {isPreview ? <Code className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-            {isPreview ? 'Write Screen' : 'Live Preview'}
-          </button>
+          <div className="bg-slate-950 p-1 rounded-lg border border-slate-800 flex items-center gap-1">
+            {[
+              { mode: 'write', label: 'Write', icon: Code },
+              { mode: 'split', label: 'Split Pane', icon: Columns },
+              { mode: 'preview', label: 'Preview', icon: Eye }
+            ].map((btn) => {
+              const isActive = editorMode === btn.mode;
+              return (
+                <button
+                  key={btn.mode}
+                  type="button"
+                  onClick={() => setEditorMode(btn.mode as any)}
+                  className={`px-2.5 py-1 rounded text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-all ${
+                    isActive 
+                      ? 'bg-slate-100 text-slate-950 shadow-sm' 
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <btn.icon className="w-3.5 h-3.5" />
+                  <span>{btn.label}</span>
+                </button>
+              );
+            })}
+          </div>
           
           <button
             onClick={onCancel}
@@ -346,21 +363,42 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               </div>
             </div>
 
-            {isPreview ? (
+            {editorMode === 'split' ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Left: Textarea Code Editor */}
+                <textarea
+                  id="editor-textarea"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  rows={14}
+                  placeholder="Start writing using standard text markup..."
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-4 text-xs font-mono text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-700 focus:border-slate-700"
+                />
+                {/* Right: Rendered Output */}
+                <div 
+                  className="w-full bg-slate-950/40 border border-slate-800 rounded-lg p-5 min-h-[320px] max-h-[460px] overflow-y-auto prose prose-invert prose-slate text-slate-300 prose-headings:text-white prose-pre:bg-slate-900/80 prose-blockquote:border-l-4"
+                  style={{ '--tw-prose-quote-borders': `hsl(${hue}, 80%, 60%)` } as React.CSSProperties}
+                >
+                  <h1 className="text-xl font-bold tracking-tight text-white mb-2">{title || 'Untitled Post'}</h1>
+                  {excerpt && <p className="italic text-slate-400 text-[11px] mb-4 pb-2 border-b border-slate-800/60">{excerpt}</p>}
+                  <div dangerouslySetInnerHTML={{ __html: content || '<p className="text-slate-500 italic">No content written yet. Type on the left side to see it live.</p>' }} />
+                </div>
+              </div>
+            ) : editorMode === 'preview' ? (
               <div 
-                className="w-full bg-slate-950/40 border border-slate-800 rounded-b-lg p-5 min-h-[320px] max-h-[460px] overflow-y-auto prose prose-invert prose-slate text-slate-300 prose-headings:text-white prose-pre:bg-slate-900/80 prose-blockquote:border-l-4"
+                className="w-full bg-slate-950/40 border border-slate-800 rounded-lg p-5 min-h-[320px] max-h-[460px] overflow-y-auto prose prose-invert prose-slate text-slate-300 prose-headings:text-white prose-pre:bg-slate-900/80 prose-blockquote:border-l-4"
                 style={{ '--tw-prose-quote-borders': `hsl(${hue}, 80%, 60%)` } as React.CSSProperties}
               >
                 <h1 className="text-2xl font-bold tracking-tight text-white mb-2">{title || 'Untitled Post'}</h1>
                 {excerpt && <p className="italic text-slate-400 text-sm mb-6 pb-4 border-b border-slate-800/60">{excerpt}</p>}
-                <div dangerouslySetInnerHTML={{ __html: content || '<p className="text-slate-500 italic">No content written yet. Type below to see structured styling.</p>' }} />
+                <div dangerouslySetInnerHTML={{ __html: content || '<p className="text-slate-500 italic">No content written yet. Type in Write or Split pane mode.</p>' }} />
               </div>
             ) : (
               <textarea
                 id="editor-textarea"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                rows={12}
+                rows={14}
                 placeholder="Start writing using standard text markup. Try: <h3>Typography</h3> or <pre><code>code blocks</code></pre> to organize items..."
                 className="w-full bg-slate-950 border border-slate-800 rounded-b-lg p-4 text-xs font-mono text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-700 focus:border-slate-700"
               />
